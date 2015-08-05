@@ -1,0 +1,20 @@
+SDCARD Not Detected
+
+URI: /
+Method: GET
+Arguments: 0
+
+
+add 0
+aid 5
+pm open phy_2,type:2 0 0
+cnt 
+
+connected with Robot-staff, channel 6
+dhcp client start...
+ip:192.168.1.117,mask:255.255.255.0,gw:192.168.1.1
+Connected! IP address: 192.168.1.117
+MDNS responder started
+You can now connect to http://esp8266sd.local
+HTTP server started
+
