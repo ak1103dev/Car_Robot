@@ -27,7 +27,7 @@ void handleDelete(){
 }
 
 void handleNotFound(){
-  micValue = analogRead(micPin);
+  micValue = analogRead(micPin) - 512;
   String message = String(micValue) + "\n";
   for (uint8_t i=0; i<server.args(); i++){
     message += " NAME:"+server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
@@ -52,7 +52,7 @@ void setup(void){
   if(i == 21){
     DBG_OUTPUT_PORT.print("Could not connect to");
     DBG_OUTPUT_PORT.println(ssid);
-    while(1) delay(100);
+    //while(1) delay(10);
   }
   DBG_OUTPUT_PORT.print("Connected! IP address: ");
   DBG_OUTPUT_PORT.println(WiFi.localIP());
