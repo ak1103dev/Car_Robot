@@ -12,9 +12,6 @@ const char* host = "robot1";
 
 ESP8266WebServer server(80);
 
-int micPin = A0;      
-int micValue = 0;
-
 void returnFail(String msg) {
   server.sendHeader("Connection", "close");
   server.sendHeader("Access-Control-Allow-Origin", "*");
@@ -27,8 +24,13 @@ void handleDelete(){
 }
 
 void handleNotFound(){
-  micValue = analogRead(micPin) - 512;
-  String message = String(micValue) + "\n";
+  Serial.println("aaa");
+  String micValue = Serial.readStringUntil('\r');
+  micValue.replace("\r", "");
+  micValue.replace("\n", "");
+  //micValue = analogRead(micPin);
+  Serial.println("xxx");
+  String message = micValue;
   for (uint8_t i=0; i<server.args(); i++){
     message += " NAME:"+server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
   }
