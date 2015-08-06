@@ -3,18 +3,17 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <SPI.h>
-#include <SD.h>
 
 #define DBG_OUTPUT_PORT Serial
 
-const char* ssid = "";
-const char* password = "";
-const char* host = "esp8266sd";
+const char* ssid = "Robot-staff";
+const char* password = "12345678";
+const char* host = "robot1";
 
 ESP8266WebServer server(80);
 
-static bool hasSD = false;
-File uploadFile;
+int micPin = A0;      
+int micValue = 0;
 
 void returnFail(String msg) {
   server.sendHeader("Connection", "close");
@@ -25,22 +24,11 @@ void returnFail(String msg) {
 void handleDelete(){
   if(server.args() == 0) return returnFail("BAD ARGS");
   String path = server.arg(0);
-  if(path == "/" || !SD.exists((char *)path.c_str())) {
-    returnFail("BAD PATH");
-    return;
-  }
 }
 
 void handleNotFound(){
-//  if(hasSD && loadFromSdCard(server.uri())) return;
-  String message = "SDCARD Not Detected\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET)?"GET":"POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
+  micValue = analogRead(micPin);
+  String message = String(micValue) + "\n";
   for (uint8_t i=0; i<server.args(); i++){
     message += " NAME:"+server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
   }
@@ -59,12 +47,12 @@ void setup(void){
   // Wait for connection
   uint8_t i = 0;
   while (WiFi.status() != WL_CONNECTED && i++ < 20) {//wait 10 seconds
-    delay(500);
+    delay(100);
   }
   if(i == 21){
     DBG_OUTPUT_PORT.print("Could not connect to");
     DBG_OUTPUT_PORT.println(ssid);
-    while(1) delay(500);
+    while(1) delay(100);
   }
   DBG_OUTPUT_PORT.print("Connected! IP address: ");
   DBG_OUTPUT_PORT.println(WiFi.localIP());
@@ -82,10 +70,6 @@ void setup(void){
   server.begin();
   DBG_OUTPUT_PORT.println("HTTP server started");
 
-  if (SD.begin(SS)){
-     DBG_OUTPUT_PORT.println("SD Card initialized.");
-     hasSD = true;
-  }
 }
 
 void loop(void){
